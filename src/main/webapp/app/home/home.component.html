@@ -27,16 +27,87 @@
             <!--<div>Teacher_ID</div>-->
         <!--</div>-->
 
-        <div><span><button (click)="getAllCourses()">显示所有课程</button> <button (click)="clearAllCourses()">清除</button></span></div>
-        <div *ngFor="let course of courses" style="padding-bottom: 2px">
-        <div style="display: flex; width: 100%; height: 40px; justify-content: space-between; border-top: 1px solid; border-bottom: 1px solid; border-left: 1px solid; border-right: 1px solid">
-        <div style="padding-left: 5px">{{course.courseName}}</div>
-        <div>{{course.courseLocation}}</div>
-        <div>{{course.courseContent}}</div>
-        <div>{{course.teacherId}}</div>
-        <button className = "btn-primary"> Sign </button>
-        </div>
-        </div>
+        <!--<div *ngIf="isStudent()">&lt;!&ndash; If student, print enroll course function&ndash;&gt;-->
+            <!--<div><span><button (click)="getAllCourses()">显示所有课程</button> <button (click)="clearAllCourses()">清除</button></span></div>-->
+            <!--<div *ngFor="let course of courses" style="padding-bottom: 2px">-->
+            <!--<div style="display: flex; width: 100%; height: 40px; justify-content: space-between; border-top: 1px solid; border-bottom: 1px solid; border-left: 1px solid; border-right: 1px solid">-->
+            <!--<div style="padding-left: 5px">{{course.courseName}}</div>-->
+            <!--<div>{{course.courseLocation}}</div>-->
+            <!--<div>{{course.courseContent}}</div>-->
+            <!--<div>{{course.teacherId}}</div>-->
+            <!--<button className="btn-primary"> Sign </button>-->
+            <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
 
+    <div [ngSwitch]="isAuthenticated()">
+    <div class="alert alert-success" *ngSwitchCase="true">
+        <span *ngIf="account"> You are logged in as user "{{account.login}}". </span>
+
+        <div *ngIf="isStudent()"><!-- If student, print enroll course function-->
+            <!--显示已选课程-->
+            <div>
+                <div><span><button class="btn-light" (click)="toggleNotRegisteredCourses()">{{notRegisteredCoursesStr}}已选课程</button></span></div>
+                    <div *ngIf="showNotRegisteredCourses">
+                        <table class="table">
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Location</th>
+                                <th>Content</th>
+                                <th>Teacher ID</th>
+                            </tr>
+                            <tr *ngFor="let course of registeredCourses" style="padding-bottom: 2px">
+                                <td style="padding-left: 5px">{{course.courseName}}</td>
+                                <td>{{course.courseLocation}}</td>
+                                <td>{{course.courseContent}}</td>
+                                <td>{{course.teacherId}}</td>
+                                <td><button class = "btn-primary" (click)="withdrawCourse(course)"> Withdraw </button></td>
+                                <!--</div>-->
+                            </tr>
+                        </table>
+                    </div>
+            </div>
+            <hr>
+            <!--选课-->
+            <div>
+                <div><span><button (click)="toggleRegisteredCourses()" class="btn-light">{{registeredCoursesStr}}未选课程</button> <!--<button (click)="clearAllCourses()" class="btn-warning">清除</button>--></span></div>
+                    <div *ngIf="showRegisteredCourses">
+                        <table class="table">
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Location</th>
+                                <th>Content</th>
+                                <th>Teacher ID</th>
+                            </tr>
+                            <tr *ngFor="let course of courses" style="padding-bottom: 2px">
+                                <ng-container *ngIf="!hasRegistered(course)">
+                                <!--<div style="display: flex; width: 100%; height: 40px; justify-content: space-between; border-top: 1px solid; border-bottom: 1px solid; border-left: 1px solid; border-right: 1px solid">-->
+                                    <td style="padding-left: 5px">{{course.courseName}}</td>
+                                    <td>{{course.courseLocation}}</td>
+                                    <td>{{course.courseContent}}</td>
+                                    <td>{{course.teacherId}}</td>
+                                    <td><button class = "btn-primary" (click)="registerCourse(course)"> Sign </button></td>
+                                <!--</div>-->
+                                </ng-container>
+                            </tr>
+                        </table>
+                    </div>
+            </div>
+        </div>
+        <div *ngIf="isTeacher()">
+            <div>注册课程 --- 还没做，哈哈哈哈</div>
+        </div>
+    </div>
+
+        <div class="alert alert-warning" *ngSwitchCase="false">
+        <span>If you want to </span>
+        <a class="alert-link" (click)="login()">sign in</a><span>, you can try the default accounts:<br/>- Administrator (login="admin" and password="admin") <br/>- User (login="user" and password="user").</span>
+
+        <div class="alert alert-warning" *ngSwitchCase="false">
+        <span>You don't have an account yet?</span>
+        <a class="alert-link" routerLink="register">Register a new account</a>
+        </div>
+        </div>
+        </div>
     </div>
 </div>

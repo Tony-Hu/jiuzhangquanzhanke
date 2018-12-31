@@ -1,17 +1,16 @@
 package com.mycompany.myapp.service;
 
+import com.mycompany.myapp.config.Constants;
 import com.mycompany.myapp.domain.Authority;
-import com.mycompany.myapp.domain.Course;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.AuthorityRepository;
-import com.mycompany.myapp.config.Constants;
 import com.mycompany.myapp.repository.CourseRepository;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.security.SecurityUtils;
-import com.mycompany.myapp.service.util.RandomUtil;
 import com.mycompany.myapp.service.dto.UserDTO;
-
+import com.mycompany.myapp.service.util.RandomUtil;
+import com.mycompany.myapp.web.rest.errors.InvalidPasswordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.mycompany.myapp.web.rest.errors.InvalidPasswordException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -99,11 +100,20 @@ public class UserService {
         newUser.setImageUrl(userDTO.getImageUrl());
         newUser.setLangKey(userDTO.getLangKey());
         // new user is not active
-        newUser.setActivated(false);
+        //TODO since the email activation service is not yet implemented, set activated to true for now
+        newUser.setActivated(true);
         // new user gets registration key
         newUser.setActivationKey(RandomUtil.generateActivationKey());
+
         Set<Authority> authorities = new HashSet<>();
+        // TODO add a admin role later
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        if (userDTO.getAuthorities().contains(AuthoritiesConstants.STUDENT)) {
+            authorityRepository.findById(AuthoritiesConstants.STUDENT).ifPresent(authorities::add);
+        } else if (userDTO.getAuthorities().contains(AuthoritiesConstants.TEACHER)) {
+            authorityRepository.findById(AuthoritiesConstants.TEACHER).ifPresent(authorities::add);
+        }
+
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);

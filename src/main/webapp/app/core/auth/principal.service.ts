@@ -65,6 +65,7 @@ export class Principal {
             .get()
             .toPromise()
             .then(response => {
+                // TODO add Role control
                 const account = response.body;
                 if (account) {
                     this.userIdentity = account;

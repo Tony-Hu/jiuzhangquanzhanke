@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -17,4 +18,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("SELECT new com.mycompany.myapp.domain.dto.CourseDto(c.courseName, c.courseLocation, c.courseContent, c.teacherId) from Course c")
     List<CourseDto> findAllCoursesDto();
 
+    Optional<Course> findOneByCourseName(String courseName);
 }

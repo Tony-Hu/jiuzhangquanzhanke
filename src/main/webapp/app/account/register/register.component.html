@@ -111,6 +111,12 @@
                         </small>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="accountType">Account role</label>
+                    <select class="form-control" id="accountType" [(ngModel)]="registerAccount.authorities[0]" name="accountType" required>
+                        <option *ngFor="let accountType of accountTypes" [value]="accountType">{{USER_ROLE[accountType]}}</option>
+                    </select>
+                </div>
 
                 <button type="submit" [disabled]="registerForm.form.invalid" class="btn btn-primary">Register</button>
             </form>

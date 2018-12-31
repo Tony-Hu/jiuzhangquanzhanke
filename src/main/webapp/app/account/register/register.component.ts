@@ -19,6 +19,8 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     registerAccount: any;
     success: boolean;
     modalRef: NgbModalRef;
+    accountTypes = ['ROLE_STUDENT', 'ROLE_TEACHER'];
+    USER_ROLE = { ROLE_STUDENT: 'Student', ROLE_TEACHER: 'Teacher' };
 
     constructor(
         private loginModalService: LoginModalService,
@@ -29,7 +31,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.success = false;
-        this.registerAccount = {};
+        this.registerAccount = {
+            authorities: []
+        };
     }
 
     ngAfterViewInit() {
@@ -45,6 +49,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
             this.errorUserExists = null;
             this.errorEmailExists = null;
             this.registerAccount.langKey = 'en';
+            console.log('Submit account detail: ' + this.registerAccount.authorities);
             this.registerService.save(this.registerAccount).subscribe(
                 () => {
                     this.success = true;
